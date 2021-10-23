@@ -1,2 +1,11 @@
 *.class
 *.log
+.vscode/
+target/
+project/
+.metals/
+.bloop/
+.bsp/
+.DS_Store
+out/
+test_run_dir/
