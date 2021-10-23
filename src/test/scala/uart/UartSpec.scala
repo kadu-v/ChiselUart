@@ -6,7 +6,7 @@ import chisel3._
 
 class UartRxSpec extends FlatSpec with ChiselScalatestTester with Matchers {
   behavior of "Uart Rx(12 MHz, 115200 bps)"
-  it should "recieve" in {
+  it should "recieve 0b01010101" in {
     test(new Rx(12, 115200)) { c =>
       // 104 clock
       c.io.rx.poke(true.B)
