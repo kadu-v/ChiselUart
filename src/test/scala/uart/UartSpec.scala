@@ -128,11 +128,10 @@ class UartRxSpec extends FlatSpec with ChiselScalatestTester with Matchers {
     }
   }
 
-  it should "send \"Hello Chisel World\" and revieve same data" in {
+  it should "send \"Hello Chisel World\" and revieve same data (12 MHz, 115200 bps)" in {
     test(new UartLoopBack(12, 115200)) { c =>
       c.clock.setTimeout(0)
-      var rdata = Nil
-      for (d <- "Hello Chisel World!!!") {
+      for (d <- "Hello Chisel World!!! 12MHz, 115200") {
         // wait Tx ready
         while (c.io.txBusy.peek().litValue() == 1) {
           c.clock.step(1)
@@ -156,4 +155,61 @@ class UartRxSpec extends FlatSpec with ChiselScalatestTester with Matchers {
       println()
     }
   }
+
+  it should "send \"Hello Chisel World\" and revieve same data ( 4 MHz, 115200 bps)" in {
+    test(new UartLoopBack(4, 115200)) { c =>
+      c.clock.setTimeout(0)
+      for (d <- "Hello Chisel World!!! 4MHz, 115200") {
+        // wait Tx ready
+        while (c.io.txBusy.peek().litValue() == 1) {
+          c.clock.step(1)
+        }
+
+        // Send data via UART Tx
+        c.io.din.poke(d.toInt.U(8.W))
+        c.io.run.poke(true.B) // send a data
+        c.clock.step(1)
+        c.io.run.poke(false.B)
+        c.clock.step(10)
+
+        // wait to recive data
+        while (c.io.rxBusy.peek().litValue() == 1) {
+          c.clock.step(1)
+        }
+
+        print(s"${c.io.dout.peek().litValue().toChar}")
+        c.io.dout.expect(d.toInt.U(8.W))
+      }
+      println()
+    }
+  }
+
+  it should "send \"Hello Chisel World\" and revieve same data (120 MHz, 115200 bps)" in {
+    test(new UartLoopBack(120, 115200)) { c =>
+      c.clock.setTimeout(0)
+      for (d <- "Hello Chisel World!!! 120MHz, 115200") {
+        // wait Tx ready
+        while (c.io.txBusy.peek().litValue() == 1) {
+          c.clock.step(1)
+        }
+
+        // Send data via UART Tx
+        c.io.din.poke(d.toInt.U(8.W))
+        c.io.run.poke(true.B) // send a data
+        c.clock.step(1)
+        c.io.run.poke(false.B)
+        c.clock.step(10)
+
+        // wait to recive data
+        while (c.io.rxBusy.peek().litValue() == 1) {
+          c.clock.step(1)
+        }
+
+        print(s"${c.io.dout.peek().litValue().toChar}")
+        c.io.dout.expect(d.toInt.U(8.W))
+      }
+      println()
+    }
+  }
+
 }
