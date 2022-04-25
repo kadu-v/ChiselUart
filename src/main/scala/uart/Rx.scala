@@ -40,7 +40,7 @@ class Rx(freq: Int, baudRate: Int) extends Module {
     is(sIDLE) {
       when(detedge0.io.negdet) {
         state := sWAIT
-        io.busy := true.B
+        busy := true.B
         io.rts := false.B
       }
     }
@@ -57,7 +57,7 @@ class Rx(freq: Int, baudRate: Int) extends Module {
         state := sEND
       }.elsewhen(clkCnt === waitTime) {
         clkCnt := 0.asUInt()
-        rxData := Cat(io.rx, rxData(8, 1)) // LSB
+        rxData := io.rx ## rxData(8, 1) // LSB, shift
         dataCnt := dataCnt + 1.asUInt()
       }.otherwise {
         clkCnt := clkCnt + 1.asUInt()
